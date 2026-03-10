@@ -4,9 +4,10 @@ namespace App\Commands\Projects;
 
 use App\Http\Integrations\Toggl\TogglConnector;
 use App\Project;
+use Illuminate\Support\Collection;
 use LaravelZero\Framework\Commands\Command;
 
-use function Mantas6\FzfPhp\fzf;
+use function Laravel\Prompts\search;
 
 class AddCommand extends Command
 {
@@ -29,19 +30,26 @@ class AddCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
+        /** @var Collection<int, array{id: int, name: string}> $items */
         $items = (new TogglConnector)->projects()
             ->collect();
 
-        $selected = fzf(
-            options: $items,
-            present: fn (array $project) => [$project['name']],
+        $selectedId = search(
+            label: 'Select a project to add',
+            options: fn (string $value) => $items
+                ->filter(fn (array $project): bool => mb_stripos($project['name'], $value) !== false)
+                ->mapWithKeys(fn (array $project): array => [$project['id'] => $project['name']])
+                ->all(),
+            placeholder: 'Search for a project...',
         );
 
-        if (!$selected) {
+        if (!$selectedId) {
             return;
         }
+
+        $selected = $items->firstOrFail(fn (array $project): bool => $project['id'] === $selectedId);
 
         $project = Project::query()
             ->firstOrNew(['name' => $selected['name']]);

@@ -21,7 +21,6 @@
         "laravel-zero/framework": "^11.0.2",
         "laravel/boost": "^2.2",
         "laravel/serializable-closure": "^2.0",
-        "mantas6/fzf-php": "^0.4",
         "saloonphp/laravel-http-sender": "^3.0",
         "saloonphp/laravel-plugin": "^3.0",
         "saloonphp/saloon": "^3.0"

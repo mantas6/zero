@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a68c3e4da4f3bcf9f79647cd478cd29",
+    "content-hash": "2b5a31d4cc11bbf33b4fb28c19258006",
     "packages": [
         {
             "name": "brick/math",
@@ -3143,73 +3143,6 @@
                 }
             ],
             "time": "2024-09-21T08:32:55+00:00"
-        },
-        {
-            "name": "mantas6/fzf-php",
-            "version": "v0.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mantas6/fzf-php.git",
-                "reference": "03135ebf009775382a778600e4bf4a649389e4a2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mantas6/fzf-php/zipball/03135ebf009775382a778600e4bf4a649389e4a2",
-                "reference": "03135ebf009775382a778600e4bf4a649389e4a2",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.3.0",
-                "symfony/console": "^7.0",
-                "symfony/process": "^7.0",
-                "symfony/string": "^7.0"
-            },
-            "require-dev": {
-                "laravel/pint": "^1.20.0",
-                "nesbot/carbon": "^3.8.4",
-                "pestphp/pest": "^3.7.4",
-                "pestphp/pest-plugin-type-coverage": "^3.2.3",
-                "phpstan/phpstan": "^1.12.16",
-                "rector/rector": "^1.2.10",
-                "symfony/var-dumper": "^7.2.3"
-            },
-            "bin": [
-                "bin/fzf-php-install",
-                "bin/fzf-php-socket"
-            ],
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/Functions.php"
-                ],
-                "psr-4": {
-                    "Mantas6\\FzfPhp\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mantas",
-                    "email": "6524518+mantas6@users.noreply.github.com"
-                }
-            ],
-            "description": "Interactive fzf command line menus in PHP",
-            "keywords": [
-                "fzf",
-                "package",
-                "php",
-                "prompt",
-                "terminal",
-                "tui"
-            ],
-            "support": {
-                "issues": "https://github.com/mantas6/fzf-php/issues",
-                "source": "https://github.com/mantas6/fzf-php/tree/v0.4.0"
-            },
-            "time": "2025-02-17T10:27:06+00:00"
         },
         {
             "name": "nesbot/carbon",

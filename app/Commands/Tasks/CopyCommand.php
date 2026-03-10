@@ -8,7 +8,7 @@ use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Support\Facades\Process;
 use LaravelZero\Framework\Commands\Command;
 
-use function Mantas6\FzfPhp\fzf;
+use function Laravel\Prompts\search;
 
 class CopyCommand extends Command implements PromptsForMissingInput
 {
@@ -31,7 +31,7 @@ class CopyCommand extends Command implements PromptsForMissingInput
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         if ($this->option('sync')) {
             $this->call(SyncCommand::class, [
@@ -42,13 +42,20 @@ class CopyCommand extends Command implements PromptsForMissingInput
         $tasks = Project::query()
             ->where('name', 'like', '%'.$this->argument('project-name').'%')
             ->firstOrFail()
-            ->tasks;
+            ->tasks
+            ->reverse();
 
-        $task = fzf(
-            options: $tasks,
-            arguments: ['tac' => true],
-            present: fn (Task $task) => [$task->name],
+        $taskId = search(
+            label: 'Select a task to copy',
+            options: fn (string $value) => $tasks
+                ->filter(fn (Task $task): bool => mb_stripos($task->name, $value) !== false)
+                ->mapWithKeys(fn (Task $task): array => [$task->id => $task->name])
+                ->all(),
+            placeholder: 'Search for a task...',
         );
+
+        /** @var Task $task */
+        $task = $tasks->firstOrFail(fn (Task $task): bool => $task->id === $taskId);
 
         Process::input($task->name)->run('xc');
     }
