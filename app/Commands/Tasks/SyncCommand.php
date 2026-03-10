@@ -48,7 +48,7 @@ class SyncCommand extends Command
                     $task->name = $item['name'];
                     $task->save();
                 })
-                ->tap(fn ($items) => $this->components->twoColumnDetail($project->name, count($items)));
+                ->tap(fn ($items) => $this->components->twoColumnDetail($project->name, (string) count($items)));
         }
     }
 }

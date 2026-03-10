@@ -3,7 +3,6 @@
 namespace App\Commands\TimeEntries;
 
 use App\TimeEntry;
-use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 
 class ListCommand extends Command
@@ -30,11 +29,11 @@ class ListCommand extends Command
         $entries = TimeEntry::query()
             ->whereToday()
             ->get()
-            ->map(fn (TimeEntry $entry) => [
+            ->map(fn (TimeEntry $entry): array => [
                 $entry->task->name,
-                $entry->started_at,
-                $entry->stopped_at,
-                $entry->started_at->diffForHumans($entry->stopped_at ?: now()),
+                $entry->started_at?->format('H:i'),
+                $entry->stopped_at?->format('H:i'),
+                $entry->started_at?->diffForHumans($entry->stopped_at ?: now()) ?? '',
             ])
             ->all();
 

@@ -14,9 +14,11 @@ use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
 
 class TogglConnector extends Connector
 {
-    use AcceptsJson, AlwaysThrowOnErrors;
+    use AcceptsJson;
+    use AlwaysThrowOnErrors;
 
     protected string $token;
+
     protected string $workspaceId;
 
     public function __construct(string $tokenString = '')
@@ -49,16 +51,16 @@ class TogglConnector extends Connector
         );
     }
 
-    protected function defaultAuth(): BasicAuthenticator
-    {
-        return new BasicAuthenticator($this->token, 'api_token');
-    }
-
     /**
      * The Base URL of the API
      */
     public function resolveBaseUrl(): string
     {
         return 'https://api.track.toggl.com/api/v9';
+    }
+
+    protected function defaultAuth(): BasicAuthenticator
+    {
+        return new BasicAuthenticator($this->token, 'api_token');
     }
 }

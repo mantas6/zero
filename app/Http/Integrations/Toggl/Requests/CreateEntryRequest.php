@@ -3,9 +3,9 @@
 namespace App\Http\Integrations\Toggl\Requests;
 
 use App\TimeEntry;
+use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasJsonBody;
 
 class CreateEntryRequest extends Request implements HasBody
@@ -32,11 +32,17 @@ class CreateEntryRequest extends Request implements HasBody
 
     protected function defaultBody(): array
     {
+        $startedAt = $this->entry->started_at;
+        $stoppedAt = $this->entry->stopped_at;
+
         return [
             'billable' => true,
-            'created_with' => '',
-            'duration' => 1,
-            // 'ubuntu_version' => $this->entry->id,
+            'created_with' => 'zero-cli',
+            'duration' => $startedAt && $stoppedAt
+                ? $startedAt->diffInSeconds($stoppedAt)
+                : -1,
+            'start' => $startedAt?->toIso8601String(),
+            'task_id' => $this->entry->task_id ?? null,
         ];
     }
 }

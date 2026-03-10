@@ -2,7 +2,6 @@
 
 namespace App\Commands\TimeEntries;
 
-use App\Task;
 use App\TimeEntry;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;

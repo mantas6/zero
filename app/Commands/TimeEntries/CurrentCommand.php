@@ -32,7 +32,7 @@ class CurrentCommand extends Command
             ->whereNull('stopped_at')
             ->first();
 
-        $this->line($runningEntry->task()->name);
+        $this->line($runningEntry->task->name);
     }
 
     /**

@@ -14,7 +14,7 @@ class TasksRequest extends Request
 
     public function __construct(
         protected readonly string $workspaceId,
-        protected readonly string $projectId
+        protected readonly string|int $projectId
     ) {}
 
     /**
