@@ -59,4 +59,16 @@ return [
         AppServiceProvider::class,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Project Filter
+    |--------------------------------------------------------------------------
+    |
+    | When set via TG_PROJECT_ID, commands will filter output to only show
+    | data belonging to this local project ID. Leave unset to show all.
+    |
+    */
+
+    'project_id' => env('TG_PROJECT_ID'),
+
 ];

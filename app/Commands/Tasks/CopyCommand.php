@@ -2,6 +2,7 @@
 
 namespace App\Commands\Tasks;
 
+use App\Commands\Concerns\ResolvesProjectFilter;
 use App\Project;
 use App\Task;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
@@ -12,6 +13,8 @@ use function Laravel\Prompts\search;
 
 class CopyCommand extends Command implements PromptsForMissingInput
 {
+    use ResolvesProjectFilter;
+
     /**
      * The name and signature of the console command.
      *
@@ -39,9 +42,16 @@ class CopyCommand extends Command implements PromptsForMissingInput
             ]);
         }
 
-        $project = Project::query()
-            ->where('name', 'like', '%'.$this->argument('project-name').'%')
-            ->first();
+        $projectFilter = $this->warnIfProjectFilterInvalid();
+
+        $query = Project::query()
+            ->where('name', 'like', '%'.$this->argument('project-name').'%');
+
+        if ($projectFilter instanceof Project) {
+            $query->where('id', $projectFilter->id);
+        }
+
+        $project = $query->first();
 
         if (!$project) {
             $this->components->error('No project found matching "'.$this->argument('project-name').'".');

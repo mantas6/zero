@@ -2,6 +2,8 @@
 
 namespace App\Commands\TimeEntries;
 
+use App\Commands\Concerns\ResolvesProjectFilter;
+use App\Project;
 use App\Task;
 use App\TimeEntry;
 use Illuminate\Console\Scheduling\Schedule;
@@ -9,6 +11,8 @@ use LaravelZero\Framework\Commands\Command;
 
 class StartCommand extends Command
 {
+    use ResolvesProjectFilter;
+
     /**
      * The name and signature of the console command.
      *
@@ -40,6 +44,14 @@ class StartCommand extends Command
 
         if (!$task) {
             $this->components->error("Task with ID {$taskId} not found.");
+
+            return self::FAILURE;
+        }
+
+        $projectFilter = $this->warnIfProjectFilterInvalid();
+
+        if ($projectFilter instanceof Project && $task->project_id !== $projectFilter->id) {
+            $this->components->error("Task \"{$task->name}\" does not belong to project \"{$projectFilter->name}\".");
 
             return self::FAILURE;
         }

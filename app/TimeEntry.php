@@ -36,6 +36,17 @@ class TimeEntry extends Model
         return $query->whereDate('started_at', now()->toDateString());
     }
 
+    /**
+     * Scope to entries belonging to a specific project (via task).
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForProject(Builder $query, Project $project): Builder
+    {
+        return $query->whereHas('task', fn (Builder $q) => $q->where('project_id', $project->id));
+    }
+
     protected function casts(): array
     {
         return [

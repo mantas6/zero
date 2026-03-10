@@ -2,11 +2,15 @@
 
 namespace App\Commands\TimeEntries;
 
+use App\Commands\Concerns\ResolvesProjectFilter;
+use App\Project;
 use App\TimeEntry;
 use LaravelZero\Framework\Commands\Command;
 
 class ListCommand extends Command
 {
+    use ResolvesProjectFilter;
+
     /**
      * The name and signature of the console command.
      *
@@ -26,9 +30,16 @@ class ListCommand extends Command
      */
     public function handle(): int
     {
-        $entries = TimeEntry::query()
-            ->whereToday()
-            ->get();
+        $projectFilter = $this->warnIfProjectFilterInvalid();
+
+        $query = TimeEntry::query()
+            ->whereToday();
+
+        if ($projectFilter instanceof Project) {
+            $query->forProject($projectFilter);
+        }
+
+        $entries = $query->get();
 
         if ($entries->isEmpty()) {
             $this->components->info('No time entries for today.');

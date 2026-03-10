@@ -2,6 +2,7 @@
 
 namespace App\Commands\Tasks;
 
+use App\Commands\Concerns\ResolvesProjectFilter;
 use App\Http\Integrations\Toggl\TogglConnector;
 use App\Project;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -9,6 +10,8 @@ use LaravelZero\Framework\Commands\Command;
 
 class SyncCommand extends Command
 {
+    use ResolvesProjectFilter;
+
     /**
      * The name and signature of the console command.
      *
@@ -30,9 +33,15 @@ class SyncCommand extends Command
      */
     public function handle(): int
     {
+        $projectFilter = $this->warnIfProjectFilterInvalid();
+
         if ($projectName = $this->argument('project-name')) {
             $projects = Project::query()
                 ->where('name', 'like', '%' . $projectName . '%')
+                ->get();
+        } elseif ($projectFilter) {
+            $projects = Project::query()
+                ->where('id', $projectFilter->id)
                 ->get();
         } else {
             $projects = Project::all();
