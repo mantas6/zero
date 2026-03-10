@@ -71,4 +71,16 @@ return [
 
     'project_id' => env('TG_PROJECT_ID'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Debug Mode
+    |--------------------------------------------------------------------------
+    |
+    | When enabled via the ZERO_DEBUG environment variable, commands will
+    | output memory usage and execution time after each run.
+    |
+    */
+
+    'debug' => (bool) env('ZERO_DEBUG', false),
+
 ];
