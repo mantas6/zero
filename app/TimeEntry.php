@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
  * @property-read Task|null $task
  * @property Carbon|null $started_at
  * @property Carbon|null $stopped_at
+ * @property int|null $ext_id
  */
 class TimeEntry extends Model
 {

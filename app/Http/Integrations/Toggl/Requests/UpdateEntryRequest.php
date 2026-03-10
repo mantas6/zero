@@ -8,14 +8,14 @@ use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Traits\Body\HasJsonBody;
 
-class CreateEntryRequest extends Request implements HasBody
+class UpdateEntryRequest extends Request implements HasBody
 {
     use HasJsonBody;
 
     /**
      * The HTTP method of the request
      */
-    protected Method $method = Method::POST;
+    protected Method $method = Method::PUT;
 
     public function __construct(
         protected readonly string $workspaceId,
@@ -27,7 +27,7 @@ class CreateEntryRequest extends Request implements HasBody
      */
     public function resolveEndpoint(): string
     {
-        return '/workspaces/' . $this->workspaceId . '/time_entries';
+        return '/workspaces/' . $this->workspaceId . '/time_entries/' . $this->entry->ext_id;
     }
 
     protected function defaultBody(): array

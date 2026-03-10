@@ -2,9 +2,12 @@
 
 namespace App\Http\Integrations\Toggl;
 
+use App\Http\Integrations\Toggl\Requests\CreateEntryRequest;
 use App\Http\Integrations\Toggl\Requests\ProjectsRequest;
 use App\Http\Integrations\Toggl\Requests\TasksRequest;
+use App\Http\Integrations\Toggl\Requests\UpdateEntryRequest;
 use App\Project;
+use App\TimeEntry;
 use App\Token;
 use Saloon\Http\Auth\BasicAuthenticator;
 use Saloon\Http\Connector;
@@ -48,6 +51,20 @@ class TogglConnector extends Connector
     {
         return $this->send(
             new TasksRequest($this->workspaceId, $project->ext_id)
+        );
+    }
+
+    public function createEntry(TimeEntry $entry): Response
+    {
+        return $this->send(
+            new CreateEntryRequest($this->workspaceId, $entry)
+        );
+    }
+
+    public function updateEntry(TimeEntry $entry): Response
+    {
+        return $this->send(
+            new UpdateEntryRequest($this->workspaceId, $entry)
         );
     }
 
