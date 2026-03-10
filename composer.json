@@ -31,7 +31,9 @@
         "symfony/http-client": "^7.3"
     },
     "require-dev": {
+        "driftingly/rector-laravel": "^2.1",
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.9",
         "laravel/pint": "^1.18.1",
         "mockery/mockery": "^1.6.12",
         "pestphp/pest": "^3.5.1",
