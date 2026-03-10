@@ -22,6 +22,17 @@ composer install
 php zero migrate
 ```
 
+## Workflow
+
+The typical workflow follows this sequence:
+
+1. **Authenticate** — run `zero auth` to store your Toggl API token
+2. **Sync projects** — run `zero projects:sync` to pull your workspace projects locally
+3. **Configure tags** — run `zero projects:tags` to set default tags per project (optional)
+4. **Sync tasks** — run `zero tasks:sync` to pull tasks for your local projects
+5. **Track time** — use `time:start`, `time:stop`, `time:current`, `time:elapsed`, and `time:list` throughout the day
+6. **Push to Toggl** — run `zero time:push` to send completed entries to Toggl
+
 ## Authentication
 
 Authenticate with your Toggl API token:
@@ -30,15 +41,19 @@ Authenticate with your Toggl API token:
 zero auth
 ```
 
-You can find your API token on your [Toggl Profile page](https://track.toggl.com/profile).
+This opens your [Toggl Profile page](https://track.toggl.com/profile) in the browser where you can copy your API token. If the browser cannot be opened, the URL is printed as a fallback.
 
 ## Commands
 
 ### Projects
 
 ```bash
-zero projects:list          # List all Toggl projects
-zero projects:add           # Add a Toggl project to the local database (interactive search)
+zero projects:sync          # Sync all workspace projects from Toggl
+zero projects:sync --active  # Sync only active projects
+zero projects:list          # List locally synced projects (active only by default)
+zero projects:list --all    # Include archived projects
+zero projects:add           # Add a single Toggl project interactively
+zero projects:tags          # Configure default tags for a project
 ```
 
 ### Tasks
@@ -46,8 +61,10 @@ zero projects:add           # Add a Toggl project to the local database (interac
 ```bash
 zero tasks:sync             # Sync tasks from Toggl for all local projects
 zero tasks:sync "project"   # Sync tasks for a specific project (partial match)
+zero tasks:sync --active    # Fetch only active tasks from Toggl
 zero tasks:cp "project"     # Copy a task name to clipboard (interactive search)
 zero tasks:cp "project" -y  # Sync tasks first, then copy
+zero tasks:cp --all         # Include inactive (done) tasks in selection
 ```
 
 ### Time Tracking
@@ -56,9 +73,11 @@ zero tasks:cp "project" -y  # Sync tasks first, then copy
 zero time:start <task-id>   # Start tracking time for a task
 zero time:stop              # Stop the current timer
 zero time:current           # Show the current task name
+zero time:current --with-project  # Include project name prefix
 zero time:elapsed           # Show elapsed time on the current task
 zero time:list              # List today's time entries
-zero time:push              # Push local entries to Toggl (WIP)
+zero time:total             # Show total tracked time for today
+zero time:push              # Push local entries to Toggl (create or update)
 ```
 
 ### Aliases
@@ -72,6 +91,13 @@ Several commands have short aliases for quick access:
 | `sync` | `tasks:sync`   |
 | `y`    | `tasks:sync`   |
 | `cp`   | `tasks:cp`     |
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `TG_PROJECT_ID` | Filter all output to a specific local project ID. When set, commands like `time:list`, `time:start`, `time:total`, and `tasks:sync` scope their output to the specified project. When unset, all projects are shown. |
+| `ZERO_DEBUG` | Set to `1` to display memory usage and execution time after each command. |
 
 ## Shell Completion
 
@@ -144,9 +170,9 @@ After setup, type `zero ` and press `Tab` to see available commands:
 
 ```
 $ zero <TAB>
-authenticate   projects:add   projects:list  tasks:cp       tasks:sync
-time:current   time:elapsed   time:list      time:push      time:start
-time:stop
+authenticate   projects:add   projects:list  projects:sync  projects:tags
+tasks:cp       tasks:sync     time:current   time:elapsed   time:list
+time:push      time:start     time:stop      time:total
 ```
 
 Command arguments and options are also completed:
