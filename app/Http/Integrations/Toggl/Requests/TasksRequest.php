@@ -14,7 +14,8 @@ class TasksRequest extends Request
 
     public function __construct(
         protected readonly string $workspaceId,
-        protected readonly string|int $projectId
+        protected readonly string|int $projectId,
+        protected readonly ?bool $active = null,
     ) {}
 
     /**
@@ -23,5 +24,19 @@ class TasksRequest extends Request
     public function resolveEndpoint(): string
     {
         return '/workspaces/'.$this->workspaceId.'/projects/'.$this->projectId.'/tasks';
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function defaultQuery(): array
+    {
+        if ($this->active === null) {
+            return [];
+        }
+
+        return [
+            'active' => $this->active ? 'true' : 'false',
+        ];
     }
 }

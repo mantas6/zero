@@ -17,7 +17,7 @@ class SyncCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'tasks:sync {project-name?}';
+    protected $signature = 'tasks:sync {project-name?} {--active : Only sync active (not done) tasks from Toggl}';
 
     protected $aliases = ['sync', 'y'];
 
@@ -34,10 +34,11 @@ class SyncCommand extends Command
     public function handle(): int
     {
         $projectFilter = $this->warnIfProjectFilterInvalid();
+        $activeOnly = $this->option('active');
 
         if ($projectName = $this->argument('project-name')) {
             $projects = Project::query()
-                ->where('name', 'like', '%' . $projectName . '%')
+                ->where('name', 'like', '%'.$projectName.'%')
                 ->get();
         } elseif ($projectFilter) {
             $projects = Project::query()
@@ -63,13 +64,14 @@ class SyncCommand extends Command
 
         foreach ($projects as $project) {
             $connector
-                ->tasks($project)
+                ->tasks($project, $activeOnly ? true : null)
                 ->collect()
                 ->each(function (array $item) use ($project): void {
                     $task = $project->tasks()
                         ->firstOrNew(['ext_id' => $item['id']]);
 
                     $task->name = $item['name'];
+                    $task->active = $item['active'] ?? true;
                     $task->save();
                 })
                 ->tap(fn ($items) => $this->components->twoColumnDetail($project->name, (string) count($items)));

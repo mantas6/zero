@@ -47,10 +47,10 @@ class TogglConnector extends Connector
         );
     }
 
-    public function tasks(Project $project): Response
+    public function tasks(Project $project, ?bool $active = null): Response
     {
         return $this->send(
-            new TasksRequest($this->workspaceId, $project->ext_id)
+            new TasksRequest($this->workspaceId, $project->ext_id, $active)
         );
     }
 

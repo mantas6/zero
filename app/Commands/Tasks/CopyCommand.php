@@ -20,7 +20,7 @@ class CopyCommand extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $signature = 'tasks:cp {project-name} {--y|sync}';
+    protected $signature = 'tasks:cp {project-name} {--y|sync} {--all : Include inactive (done) tasks}';
 
     protected $aliases = ['cp'];
 
@@ -59,7 +59,13 @@ class CopyCommand extends Command implements PromptsForMissingInput
             return self::FAILURE;
         }
 
-        $tasks = $project->tasks->reverse();
+        $tasksQuery = $project->tasks();
+
+        if (!$this->option('all')) {
+            $tasksQuery->where('active', true);
+        }
+
+        $tasks = $tasksQuery->get()->reverse();
 
         if ($tasks->isEmpty()) {
             $this->components->warn("No tasks found for project \"{$project->name}\". Run tasks:sync first.");
