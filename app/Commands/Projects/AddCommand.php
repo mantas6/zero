@@ -41,7 +41,7 @@ class AddCommand extends Command
             return self::FAILURE;
         }
 
-        /** @var Collection<int, array{id: int, name: string}> $items */
+        /** @var Collection<int, array{id: int, name: string, active: bool, billable: bool|null, color: string, client_name: string|null}> $items */
         $items = $connector->projects()
             ->collect();
 
@@ -67,9 +67,14 @@ class AddCommand extends Command
         $selected = $items->firstOrFail(fn (array $project): bool => $project['id'] === $selectedId);
 
         $project = Project::query()
-            ->firstOrNew(['name' => $selected['name']]);
+            ->firstOrNew(['ext_id' => $selected['id']]);
 
+        $project->name = $selected['name'];
         $project->ext_id = $selected['id'];
+        $project->active = $selected['active'];
+        $project->billable = $selected['billable'] ?? false;
+        $project->color = $selected['color'];
+        $project->client_name = $selected['client_name'];
         $project->save();
 
         $this->components->info("Project \"{$selected['name']}\" added.");
