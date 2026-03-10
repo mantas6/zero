@@ -22,13 +22,9 @@
         "laravel/boost": "^2.2",
         "laravel/serializable-closure": "^2.0",
         "mantas6/fzf-php": "^0.4",
-        "nikic/php-parser": "^5.4",
         "saloonphp/laravel-http-sender": "^3.0",
         "saloonphp/laravel-plugin": "^3.0",
-        "saloonphp/saloon": "^3.0",
-        "symfony/browser-kit": "^7.3",
-        "symfony/css-selector": "^7.3",
-        "symfony/http-client": "^7.3"
+        "saloonphp/saloon": "^3.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.1",
