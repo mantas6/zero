@@ -24,13 +24,21 @@ class ListCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $entries = TimeEntry::query()
             ->whereToday()
-            ->get()
+            ->get();
+
+        if ($entries->isEmpty()) {
+            $this->components->info('No time entries for today.');
+
+            return self::SUCCESS;
+        }
+
+        $rows = $entries
             ->map(fn (TimeEntry $entry): array => [
-                $entry->task->name,
+                $entry->task->name ?? '(unknown task)',
                 $entry->started_at?->format('H:i'),
                 $entry->stopped_at?->format('H:i'),
                 $entry->started_at?->diffForHumans($entry->stopped_at ?: now()) ?? '',
@@ -39,8 +47,10 @@ class ListCommand extends Command
 
         $this->table(
             headers: [],
-            rows: $entries,
+            rows: $rows,
             tableStyle: 'compact',
         );
+
+        return self::SUCCESS;
     }
 }

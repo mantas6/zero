@@ -26,12 +26,12 @@ class CopyCommand extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Copy a task name to the clipboard';
 
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(): int
     {
         if ($this->option('sync')) {
             $this->call(SyncCommand::class, [
@@ -39,11 +39,23 @@ class CopyCommand extends Command implements PromptsForMissingInput
             ]);
         }
 
-        $tasks = Project::query()
+        $project = Project::query()
             ->where('name', 'like', '%'.$this->argument('project-name').'%')
-            ->firstOrFail()
-            ->tasks
-            ->reverse();
+            ->first();
+
+        if (!$project) {
+            $this->components->error('No project found matching "'.$this->argument('project-name').'".');
+
+            return self::FAILURE;
+        }
+
+        $tasks = $project->tasks->reverse();
+
+        if ($tasks->isEmpty()) {
+            $this->components->warn("No tasks found for project \"{$project->name}\". Run tasks:sync first.");
+
+            return self::FAILURE;
+        }
 
         $taskId = search(
             label: 'Select a task to copy',
@@ -58,5 +70,7 @@ class CopyCommand extends Command implements PromptsForMissingInput
         $task = $tasks->firstOrFail(fn (Task $task): bool => $task->id === $taskId);
 
         Process::input($task->name)->run('xc');
+
+        return self::SUCCESS;
     }
 }

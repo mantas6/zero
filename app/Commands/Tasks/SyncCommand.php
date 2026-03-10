@@ -4,6 +4,7 @@ namespace App\Commands\Tasks;
 
 use App\Http\Integrations\Toggl\TogglConnector;
 use App\Project;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use LaravelZero\Framework\Commands\Command;
 
 class SyncCommand extends Command
@@ -22,12 +23,12 @@ class SyncCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Sync tasks from Toggl for local projects';
 
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         if ($projectName = $this->argument('project-name')) {
             $projects = Project::query()
@@ -37,11 +38,25 @@ class SyncCommand extends Command
             $projects = Project::all();
         }
 
+        if ($projects->isEmpty()) {
+            $this->components->warn('No projects found. Add a project first with projects:add.');
+
+            return self::FAILURE;
+        }
+
+        try {
+            $connector = new TogglConnector;
+        } catch (ModelNotFoundException) {
+            $this->components->error('Not authenticated. Run the authenticate command first.');
+
+            return self::FAILURE;
+        }
+
         foreach ($projects as $project) {
-            (new TogglConnector)
+            $connector
                 ->tasks($project)
                 ->collect()
-                ->each(function (array $item) use ($project) {
+                ->each(function (array $item) use ($project): void {
                     $task = $project->tasks()
                         ->firstOrNew(['ext_id' => $item['id']]);
 
@@ -50,5 +65,7 @@ class SyncCommand extends Command
                 })
                 ->tap(fn ($items) => $this->components->twoColumnDetail($project->name, (string) count($items)));
         }
+
+        return self::SUCCESS;
     }
 }

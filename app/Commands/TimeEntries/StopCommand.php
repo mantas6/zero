@@ -25,18 +25,26 @@ class StopCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $runningEntry = TimeEntry::query()
             ->whereToday()
             ->whereNull('stopped_at')
             ->first();
 
-        if ($runningEntry) {
-            $runningEntry->update([
-                'stopped_at' => now(),
-            ]);
+        if (!$runningEntry) {
+            $this->components->warn('No timer is currently running.');
+
+            return self::FAILURE;
         }
+
+        $runningEntry->update([
+            'stopped_at' => now(),
+        ]);
+
+        $this->components->info('Timer stopped.');
+
+        return self::SUCCESS;
     }
 
     /**

@@ -25,14 +25,22 @@ class CurrentCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $runningEntry = TimeEntry::query()
             ->whereToday()
             ->whereNull('stopped_at')
             ->first();
 
+        if (!$runningEntry) {
+            $this->components->warn('No timer is currently running.');
+
+            return self::FAILURE;
+        }
+
         $this->line($runningEntry->task->name);
+
+        return self::SUCCESS;
     }
 
     /**

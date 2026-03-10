@@ -2,6 +2,7 @@
 
 namespace App\Commands\TimeEntries;
 
+use App\Task;
 use App\TimeEntry;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
@@ -25,8 +26,24 @@ class StartCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
+        $taskId = $this->argument('task-id');
+
+        if (!is_numeric($taskId)) {
+            $this->components->error('Task ID must be a number.');
+
+            return self::FAILURE;
+        }
+
+        $task = Task::find((int) $taskId);
+
+        if (!$task) {
+            $this->components->error("Task with ID {$taskId} not found.");
+
+            return self::FAILURE;
+        }
+
         $runningEntry = TimeEntry::query()
             ->whereToday()
             ->whereNull('stopped_at')
@@ -38,13 +55,14 @@ class StartCommand extends Command
             ]);
         }
 
-        // Task::query()
-        //     ->where(
-
         TimeEntry::create([
             'started_at' => now(),
-            'task_id' => $this->argument('task-id'),
+            'task_id' => $task->id,
         ]);
+
+        $this->components->info("Timer started for: {$task->name}");
+
+        return self::SUCCESS;
     }
 
     /**

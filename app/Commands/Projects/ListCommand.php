@@ -3,6 +3,7 @@
 namespace App\Commands\Projects;
 
 use App\Http\Integrations\Toggl\TogglConnector;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use LaravelZero\Framework\Commands\Command;
 
 class ListCommand extends Command
@@ -19,19 +20,27 @@ class ListCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'List all Toggl projects';
 
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
-        $connector = new TogglConnector;
+        try {
+            $connector = new TogglConnector;
+        } catch (ModelNotFoundException) {
+            $this->components->error('Not authenticated. Run the authenticate command first.');
+
+            return self::FAILURE;
+        }
 
         $response = $connector->projects();
 
         $response->collect()
             ->pluck('name')
             ->each(fn (string $name) => $this->line($name));
+
+        return self::SUCCESS;
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * @property-read Task $task
+ * @property-read Task|null $task
  * @property Carbon|null $started_at
  * @property Carbon|null $stopped_at
  */
