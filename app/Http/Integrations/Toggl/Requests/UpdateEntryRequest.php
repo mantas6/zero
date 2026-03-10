@@ -35,19 +35,28 @@ class UpdateEntryRequest extends Request implements HasBody
         $startedAt = $this->entry->started_at;
         $stoppedAt = $this->entry->stopped_at;
         $task = $this->entry->task;
+        $project = $task?->project;
 
-        return [
-            'billable' => true,
+        $body = [
+            'billable' => $project !== null ? $project->billable : true,
             'created_with' => 'zero-cli',
             'description' => (string) $task?->name,
             'duration' => $startedAt && $stoppedAt
                 ? (int) $startedAt->diffInSeconds($stoppedAt)
                 : -1,
-            'project_id' => $task?->project?->ext_id,
+            'project_id' => $project?->ext_id,
             'start' => $startedAt?->utc()->toIso8601String(),
             'stop' => $stoppedAt?->utc()->toIso8601String(),
             'task_id' => $task?->ext_id,
             'workspace_id' => (int) $this->workspaceId,
         ];
+
+        $tags = $project !== null ? $project->tags : [];
+
+        if ($tags !== []) {
+            $body['tags'] = $tags;
+        }
+
+        return $body;
     }
 }

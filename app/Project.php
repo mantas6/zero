@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property bool $billable
  * @property string|null $color
  * @property string|null $client_name
+ * @property array<int, string> $tags
  */
 class Project extends Model
 {
@@ -50,6 +51,7 @@ class Project extends Model
         return [
             'active' => 'boolean',
             'billable' => 'boolean',
+            'tags' => 'array',
         ];
     }
 }

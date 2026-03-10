@@ -4,6 +4,7 @@ namespace App\Http\Integrations\Toggl;
 
 use App\Http\Integrations\Toggl\Requests\CreateEntryRequest;
 use App\Http\Integrations\Toggl\Requests\ProjectsRequest;
+use App\Http\Integrations\Toggl\Requests\TagsRequest;
 use App\Http\Integrations\Toggl\Requests\TasksRequest;
 use App\Http\Integrations\Toggl\Requests\UpdateEntryRequest;
 use App\Project;
@@ -44,6 +45,13 @@ class TogglConnector extends Connector
     {
         return $this->send(
             new ProjectsRequest($this->workspaceId)
+        );
+    }
+
+    public function tags(): Response
+    {
+        return $this->send(
+            new TagsRequest($this->workspaceId)
         );
     }
 
