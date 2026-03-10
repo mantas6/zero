@@ -3,7 +3,6 @@
 namespace App\Commands\TimeEntries;
 
 use App\TimeEntry;
-use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 
 class CurrentCommand extends Command
@@ -13,7 +12,7 @@ class CurrentCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'time:current';
+    protected $signature = 'time:current {--with-project : Include project name}';
 
     /**
      * The console command description.
@@ -38,16 +37,15 @@ class CurrentCommand extends Command
             return self::FAILURE;
         }
 
-        $this->line($runningEntry->task->name);
+        $task = $runningEntry->task;
+        $output = $task->name ?? '(unknown task)';
+
+        if ($this->option('with-project') && $task?->project) {
+            $output = $task->project->name . ': ' . $output;
+        }
+
+        $this->line($output);
 
         return self::SUCCESS;
-    }
-
-    /**
-     * Define the command's schedule.
-     */
-    public function schedule(Schedule $schedule): void
-    {
-        // $schedule->command(static::class)->everyMinute();
     }
 }

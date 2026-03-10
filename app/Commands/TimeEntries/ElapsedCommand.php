@@ -3,7 +3,6 @@
 namespace App\Commands\TimeEntries;
 
 use App\TimeEntry;
-use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 
 class ElapsedCommand extends Command
@@ -38,16 +37,29 @@ class ElapsedCommand extends Command
             return self::FAILURE;
         }
 
-        $this->line(now()->diffForHumans($runningEntry->started_at));
+        $seconds = (int) $runningEntry->started_at->diffInSeconds(now());
+
+        $this->line($this->formatDuration($seconds));
 
         return self::SUCCESS;
     }
 
     /**
-     * Define the command's schedule.
+     * Format seconds into a human-readable duration string (e.g., "2h 15m").
      */
-    public function schedule(Schedule $schedule): void
+    private function formatDuration(int $seconds): string
     {
-        // $schedule->command(static::class)->everyMinute();
+        $hours = intdiv($seconds, 3600);
+        $minutes = intdiv($seconds % 3600, 60);
+
+        if ($hours > 0) {
+            return "{$hours}h {$minutes}m";
+        }
+
+        if ($minutes > 0) {
+            return "{$minutes}m";
+        }
+
+        return "{$seconds}s";
     }
 }
