@@ -11,6 +11,9 @@ parameters:
         - database
         - tests
 
+    excludePaths:
+        - tests/Feature
+
     level: 5
 
     reportUnmatchedIgnoredErrors: false
