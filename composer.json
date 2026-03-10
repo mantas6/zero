@@ -19,6 +19,7 @@
         "php": "^8.2.0",
         "illuminate/database": "^11.5",
         "laravel-zero/framework": "^11.0.2",
+        "laravel/boost": "^2.2",
         "laravel/serializable-closure": "^2.0",
         "mantas6/fzf-php": "^0.4",
         "nikic/php-parser": "^5.4",
